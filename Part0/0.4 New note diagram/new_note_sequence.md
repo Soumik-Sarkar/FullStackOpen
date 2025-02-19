@@ -1,3 +1,8 @@
+# New Note Sequence Diagram
+
+This diagram illustrates the process when a user writes a new note and clicks the "Save" button on [this page](https://studies.cs.helsinki.fi/exampleapp/notes).
+
+```mermaid
 sequenceDiagram
 participant browser
 participant server
@@ -34,3 +39,4 @@ participant server
     deactivate server
 
     Note right of browser: Browser updates UI with new note
+```
