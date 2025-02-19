@@ -1,3 +1,8 @@
+# New Note in Single Page App (SPA) Sequence Diagram
+
+This diagram illustrates what happens when a user creates a new note in the single-page app version of the Notes app at [this link](https://studies.cs.helsinki.fi/exampleapp/spa).
+
+```mermaid
 sequenceDiagram
 participant browser
 participant server
@@ -19,3 +24,4 @@ participant server
     deactivate server
 
     Note right of browser: Browser ensures the note list is up to date
+```

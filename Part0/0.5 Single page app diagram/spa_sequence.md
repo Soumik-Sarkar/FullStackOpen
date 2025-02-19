@@ -1,3 +1,8 @@
+# Single Page App (SPA) Sequence Diagram
+
+This diagram illustrates what happens when a user navigates to the SPA version of the Notes app at [this link](https://studies.cs.helsinki.fi/exampleapp/spa).
+
+```mermaid
 sequenceDiagram
 participant browser
 participant server
@@ -25,3 +30,4 @@ participant server
     deactivate server
 
     Note right of browser: The browser renders the notes dynamically without reloading the page
+```
