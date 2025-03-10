@@ -1,7 +1,7 @@
-const Persons = ({ filterPerson, handleDelete }) => {
+const Persons = ({ persons, handleDelete }) => {
   return (
     <>
-      {filterPerson.map((person, i) => (
+      {persons.map((person, i) => (
         <div key={i}>
           {person.name} {person.number}
           <button onClick={() => handleDelete(person.id)}>delete</button>

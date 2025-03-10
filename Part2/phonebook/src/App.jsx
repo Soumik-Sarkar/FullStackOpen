@@ -3,7 +3,7 @@ import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import Notification from "./components/Notfication";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,24 +13,17 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
-  const hook = () => {
-    personService.getAll().then((person) => {
-      setPersons(person);
-    });
-  };
+  useEffect(() => {
+    personService.getAll().then((persons) => setPersons(persons));
+  }, []);
 
-  useEffect(hook, []);
+  const handleNameInput = (event) => setNewName(event.target.value);
+  const handleNumberInput = (event) => setNewNumber(event.target.value);
+  const handleFilterInput = (event) => setSearchName(event.target.value);
 
-  const handleNameInput = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const handleNumberInput = (event) => {
-    setNewNumber(event.target.value);
-  };
-
-  const handleFilterInput = (event) => {
-    setSearchName(event.target.value);
+  const resetNotification = () => {
+    setNotificationMessage("");
+    setIsError(false);
   };
 
   const handleSubmit = (event) => {
@@ -57,21 +50,15 @@ const App = () => {
             setNewNumber("");
           })
           .catch((error) => {
-            // alert(
-            //   `Information of ${existingPerson.name} has already been removed from server`
-            // );
             setNotificationMessage(
               `Information of ${existingPerson.name} has already been removed from server`
             );
             setIsError(true);
-            setTimeout(() => {
-              setNotificationMessage("");
-              setIsError(false);
-            }, 3000);
+            setTimeout(resetNotification, 3000);
             setPersons(persons.filter((p) => p.id !== existingPerson.id));
           });
 
-        return; // Stop further execution
+        return;
       }
     }
 
@@ -85,47 +72,39 @@ const App = () => {
         setNewNumber("");
         setNotificationMessage(`Added ${returnedPerson.name}`);
         setIsError(false);
-        setTimeout(() => {
-          setNotificationMessage("");
-          setIsError(false);
-        }, 3000);
+        setTimeout(resetNotification, 3000);
       })
       .catch((error) => {
-        console.log("here");
-        setNotificationMessage(
-          `Server error not able to add ${newPerson.name}`
-        );
+        const errorMessage =
+          error.response?.data?.error ||
+          `Server error not able to add ${newPerson.name}`;
+        setNotificationMessage(errorMessage);
         setIsError(true);
-        setTimeout(() => {
-          setNotificationMessage("");
-          setIsError(false);
-        }, 3000);
+        setTimeout(resetNotification, 3000);
       });
   };
 
   const handleDelete = (id) => {
     const person = persons.find((p) => p.id === id);
-    if (window.confirm(`Delete ${person.name}`)) {
+    if (window.confirm(`Delete ${person.name}?`)) {
       personService
         .remove(id)
-        .then((person) => {
-          setPersons(persons.filter((p) => p.id !== person.id));
+        .then(() => {
+          console.log("Deleted person successfully");
+          setPersons(persons.filter((p) => p.id !== id));
         })
-        .catch((error) => {
+        .catch(() => {
           setNotificationMessage(
-            `Information of ${existingPerson.name} has already been removed from server`
+            `Information of ${person.name} has already been removed from server`
           );
           setIsError(true);
-          setTimeout(() => {
-            setNotificationMessage("");
-            setIsError(false);
-          }, 3000);
-          setPersons(persons.filter((p) => p.id !== person.id));
+          setTimeout(resetNotification, 3000);
+          setPersons(persons.filter((p) => p.id !== id));
         });
     }
   };
 
-  const filterPerson = persons.filter((person) =>
+  const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(searchName.toLowerCase())
   );
 
@@ -142,7 +121,7 @@ const App = () => {
         handleSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
-      <Persons filterPerson={filterPerson} handleDelete={handleDelete} />
+      <Persons persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   );
 };
